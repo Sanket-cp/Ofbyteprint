@@ -22,6 +22,15 @@ const imageMap: Record<string, string> = {
   'flyer-standard': productFlyers,
   'tshirt-custom': productTshirts,
   'sticker-die-cut': productStickers,
+  // Category mappings
+  'business-cards': productCards,
+  'banners': productBanner,
+  'posters': productFlyers,
+  'flyers': productFlyers,
+  'merchandise': productTshirts,
+  'stickers': productStickers,
+  'photo-frames': productCards,
+  'custom': productTshirts,
 };
 
 const Products = () => {
@@ -86,57 +95,80 @@ const Products = () => {
         keywords={`${selectedCategoryName.toLowerCase()}, printing services, custom printing, online printing, professional printing`}
       />
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="bg-muted/30 border-b border-border">
-          <div className="container mx-auto px-4 py-8 lg:py-12">
-            <h1 className="font-heading text-3xl lg:text-4xl font-bold text-foreground mb-2">
-              Our Products
-            </h1>
-            <p className="text-muted-foreground">
-              Choose from our wide range of printing products
-            </p>
-          </div>
-        </div>
-
         <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar Filters */}
-            <aside className="lg:w-64 flex-shrink-0">
-              <div className="sticky top-24 space-y-6">
-                <div className="bg-card rounded-xl border border-border p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Filter className="h-5 w-5 text-primary" />
-                    <h3 className="font-heading font-semibold text-foreground">Categories</h3>
-                  </div>
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => handleCategoryChange('')}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                        !selectedCategory
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted'
-                      }`}
-                    >
-                      All Products
-                    </button>
-                    {categories.map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => handleCategoryChange(cat.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                          selectedCategory === cat.id
-                            ? 'bg-primary text-primary-foreground'
-                            : 'text-muted-foreground hover:bg-muted'
-                        }`}
-                      >
-                        {cat.name}
-                      </button>
-                    ))}
+          {/* Horizontal Category Filter */}
+          <div className="mb-8">
+            <div className="bg-card rounded-xl border border-border p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <Filter className="h-5 w-5 text-primary" />
+                <h3 className="font-heading font-semibold text-foreground">Categories</h3>
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <button
+                  onClick={() => handleCategoryChange('')}
+                  className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                    !selectedCategory
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                  }`}
+                >
+                  All Products
+                </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => handleCategoryChange(cat.id)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                      selectedCategory === cat.id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Category Banner - Shows when category is selected */}
+          {selectedCategory && (
+            <div className="relative mb-8 rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[21/9] sm:aspect-[21/6] lg:aspect-[21/5] relative">
+                <img
+                  src={imageMap[selectedCategory] || productCards}
+                  alt={`${selectedCategoryName} Collection`}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/60 to-transparent" />
+                
+                {/* Banner Content */}
+                <div className="absolute inset-0 flex items-center">
+                  <div className="container mx-auto px-4">
+                    <div className="max-w-2xl text-white">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-4">
+                        <Filter className="h-4 w-4" />
+                        <span className="text-sm font-medium">Category</span>
+                      </div>
+                      <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+                        {selectedCategoryName}
+                      </h2>
+                      <p className="text-lg sm:text-xl opacity-90 mb-6">
+                        {categories.find(c => c.id === selectedCategory)?.description || 'High-quality printing products for all your needs'}
+                      </p>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm opacity-75">
+                          {loading ? 'Loading...' : `${products.length} products available`}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </aside>
+            </div>
+          )}
 
+          <div className="flex flex-col">
             {/* Products Grid */}
             <main className="flex-1">
               {/* Toolbar */}

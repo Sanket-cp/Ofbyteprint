@@ -184,6 +184,48 @@
   .shadow-floating {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    .animate-tilt {
+      animation: none; /* Disable complex animations on mobile for performance */
+    }
+    
+    .animate-bounce-slow {
+      animation-duration: 2s; /* Faster animations on mobile */
+    }
+  }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+  }
+
+  /* Dropdown hover fix */
+  .group:hover .group-hover\:opacity-100 {
+    opacity: 1 !important;
+  }
+  .group:hover .group-hover\:visible {
+    visibility: visible !important;
+  }
+  .group:hover .group-hover\:pointer-events-auto {
+    pointer-events: auto !important;
+  }
+
+  /* Extra small screens */
+  @screen xs {
+    .xs\:block {
+      display: block;
+    }
+    
+    .xs\:hidden {
+      display: none;
+    }
+  }
 }
 
 @keyframes float {

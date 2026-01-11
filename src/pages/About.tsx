@@ -2,6 +2,7 @@ import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Target, Eye, Award, Users, Printer, Clock, ArrowRight } from 'lucide-react';
+import WhyChooseUsSection from '@/components/about/WhyChooseUsSection';
 
 const About = () => {
   return (
@@ -120,6 +121,9 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      {/* Why Choose Us Section */}
+      <WhyChooseUsSection />
 
       {/* CTA */}
       <section className="py-16 gradient-primary">

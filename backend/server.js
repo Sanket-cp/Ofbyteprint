@@ -15,6 +15,8 @@ const orderRoutes = require('./routes/orders');
 const uploadRoutes = require('./routes/upload');
 const paymentRoutes = require('./routes/payments');
 const bulkOrderRoutes = require('./routes/bulkOrders');
+const apiRoutes = require('./routes/api'); // External API routes
+const trackingRoutes = require('./routes/tracking'); // Customer tracking routes
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -90,6 +92,12 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/bulk-orders', bulkOrderRoutes);
+
+// External API Routes (for admin dashboard)
+app.use('/api/v1', apiRoutes);
+
+// Customer Tracking API Routes (for external tracking app)
+app.use('/api/track', trackingRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
