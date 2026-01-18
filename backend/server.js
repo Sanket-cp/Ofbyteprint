@@ -40,8 +40,22 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:8080',
-  credentials: true
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:8080',
+    'http://localhost:3000',  // React dev server
+    'http://localhost:3001',  // Alternative React port
+    'http://localhost:4200',  // Angular dev server
+    'http://localhost:5173',  // Vite dev server
+    'http://127.0.0.1:3000',  // Local IP variants
+    'http://127.0.0.1:8080',
+    /^http:\/\/localhost:\d+$/, // Any localhost port
+    /^http:\/\/127\.0\.0\.1:\d+$/, // Any 127.0.0.1 port
+    /^https:\/\/.*\.lovable\.app$/, // Lovable.app domains
+    'https://id-preview--54d856c8-6c4f-4e5d-a525-9fc0ec35c2e3.lovable.app' // Your specific domain
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key']
 }));
 
 // Body parsing middleware
@@ -54,10 +68,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Database connection with fallback
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/printhub', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/printhub')
 .then(() => {
   console.log('✅ MongoDB connected successfully');
   isMongoConnected = true;

@@ -262,6 +262,12 @@ const templates = {
 // Send email function
 const sendEmail = async ({ to, subject, template, data, html, text }) => {
   try {
+    // Skip email sending if credentials are not configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.log('Email credentials not configured, skipping email send to:', to);
+      return { messageId: 'mock-' + Date.now(), skipped: true };
+    }
+
     const transporter = createTransporter();
 
     let emailContent = {};
@@ -291,7 +297,8 @@ const sendEmail = async ({ to, subject, template, data, html, text }) => {
     return result;
   } catch (error) {
     console.error('Email sending failed:', error);
-    throw error;
+    // Don't throw error, just log it to prevent order processing from failing
+    return { error: error.message, skipped: true };
   }
 };
 
@@ -320,6 +327,12 @@ const sendBulkEmail = async (emails) => {
 // Verify email configuration
 const verifyEmailConfig = async () => {
   try {
+    // Skip verification if credentials are not configured
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.log('Email credentials not configured, skipping verification');
+      return false;
+    }
+
     const transporter = createTransporter();
     await transporter.verify();
     console.log('✅ Email configuration verified successfully');

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ofbyte Print API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .api-test {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .config {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Ofbyte Print API Test</h1>
+        
+        <div class="config">
+            <h3>📋 API Configuration</h3>
+            <p><strong>Base URL:</strong> <code>http://localhost:5000/api/v1</code></p>
+            <p><strong>API Key:</strong> <code>pk_live_admin_2024_99bcece6a8317152f417edbd766180126cf937c2cc1d646ad0347e932c4f1112</code></p>
+            <p><strong>Header:</strong> <code>X-API-Key</code></p>
+        </div>
+
+        <div class="api-test">
+            <h3>🔍 Health Check</h3>
+            <button onclick="testHealth()">Test Health API</button>
+            <div id="health-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="api-test">
+            <h3>📦 Get All Orders</h3>
+            <button onclick="testOrders()">Get Orders</button>
+            <button onclick="testOrdersWithPagination()">Get Orders (Page 1, Limit 5)</button>
+            <div id="orders-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="api-test">
+            <h3>📊 Get Statistics</h3>
+            <button onclick="testStats()">Get Order Statistics</button>
+            <div id="stats-result" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="api-test">
+            <h3>🔄 Update Order Status (Demo)</h3>
+            <input type="text" id="order-id" placeholder="Enter Order ID" style="padding: 8px; margin: 5px;">
+            <select id="status-select" style="padding: 8px; margin: 5px;">
+                <option value="confirmed">Confirmed</option>
+                <option value="processing">Processing</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+            <button onclick="testUpdateStatus()">Update Status</button>
+            <div id="update-result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000/api/v1';
+        const API_KEY = 'pk_live_admin_2024_99bcece6a8317152f417edbd766180126cf937c2cc1d646ad0347e932c4f1112';
+
+        async function makeAPICall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'X-API-Key': API_KEY,
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                const data = await response.json();
+                
+                return {
+                    success: response.ok,
+                    status: response.status,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        function displayResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            
+            if (result.success) {
+                element.className = 'result success';
+                element.textContent = JSON.stringify(result.data, null, 2);
+            } else {
+                element.className = 'result error';
+                element.textContent = `Error: ${result.error || result.data?.message || 'Unknown error'}`;
+            }
+        }
+
+        async function testHealth() {
+            console.log('Testing Health API...');
+            const result = await makeAPICall('/health');
+            displayResult('health-result', result);
+        }
+
+        async function testOrders() {
+            console.log('Testing Orders API...');
+            const result = await makeAPICall('/orders');
+            displayResult('orders-result', result);
+        }
+
+        async function testOrdersWithPagination() {
+            console.log('Testing Orders API with pagination...');
+            const result = await makeAPICall('/orders?page=1&limit=5');
+            displayResult('orders-result', result);
+        }
+
+        async function testStats() {
+            console.log('Testing Stats API...');
+            const result = await makeAPICall('/orders/stats');
+            displayResult('stats-result', result);
+        }
+
+        async function testUpdateStatus() {
+            const orderId = document.getElementById('order-id').value;
+            const status = document.getElementById('status-select').value;
+            
+            if (!orderId) {
+                alert('Please enter an Order ID');
+                return;
+            }
+
+            console.log(`Testing Update Status API for order ${orderId}...`);
+            const result = await makeAPICall(`/orders/${orderId}/status`, 'PUT', {
+                status: status,
+                message: `Order status updated to ${status} via API test`
+            });
+            displayResult('update-result', result);
+        }
+
+        // Auto-test health on page load
+        window.onload = function() {
+            console.log('🚀 Ofbyte Print API Test Page Loaded');
+            console.log('API Base URL:', API_BASE_URL);
+            console.log('API Key:', API_KEY.substring(0, 20) + '...');
+        };
+    </script>
+</body>
+</html>

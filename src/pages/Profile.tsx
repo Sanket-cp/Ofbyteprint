@@ -257,41 +257,53 @@ const Profile = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {orders.length > 0 ? (
-                    orders.map((order) => (
-                      <div
-                        key={order._id}
-                        className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
-                      >
-                        <div className="space-y-1">
-                          <p className="font-semibold">#{order.orderNumber}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {order.items?.length} item(s)
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </p>
+                    <>
+                      {orders.map((order) => (
+                        <div
+                          key={order._id}
+                          className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-border rounded-lg hover:border-primary/30 transition-colors"
+                        >
+                          <div className="space-y-1">
+                            <p className="font-semibold">#{order.orderNumber}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {order.items?.length} item(s)
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4 mt-4 md:mt-0">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                order.status === "delivered"
+                                  ? "bg-success/10 text-success"
+                                  : order.status === "cancelled"
+                                  ? "bg-destructive/10 text-destructive"
+                                  : "bg-warning/10 text-warning"
+                              }`}
+                            >
+                              {order.status}
+                            </span>
+                            <span className="font-semibold">₹{Math.round(order.total)}</span>
+                            <Button variant="outline" size="sm" asChild>
+                              <Link to={`/orders/${order._id}`}>View</Link>
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-4 mt-4 md:mt-0">
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              order.status === "delivered"
-                                ? "bg-success/10 text-success"
-                                : order.status === "cancelled"
-                                ? "bg-destructive/10 text-destructive"
-                                : "bg-warning/10 text-warning"
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                          <span className="font-semibold">₹{Math.round(order.total)}</span>
-                          <Button variant="outline" size="sm" asChild>
-                            <Link to={`/orders/${order._id}`}>View</Link>
-                          </Button>
-                        </div>
+                      ))}
+                      <div className="pt-4 border-t border-border">
+                        <Button variant="outline" className="w-full" asChild>
+                          <Link to="/orders">View All Orders</Link>
+                        </Button>
                       </div>
-                    ))
+                    </>
                   ) : (
-                    <p className="text-center text-muted-foreground py-8">No orders yet</p>
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground mb-4">No orders yet</p>
+                      <Button asChild>
+                        <Link to="/products">Start Shopping</Link>
+                      </Button>
+                    </div>
                   )}
                 </CardContent>
               </Card>

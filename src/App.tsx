@@ -17,6 +17,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import TrackOrder from "./pages/TrackOrder";
 import Profile from "./pages/Profile";
+import Orders from "./pages/Orders";
 import OrderDetail from "./pages/OrderDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -48,6 +49,11 @@ const App = () => (
                   <Route path="/profile" element={
                     <ProtectedRoute>
                       <Profile />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/orders" element={
+                    <ProtectedRoute>
+                      <Orders />
                     </ProtectedRoute>
                   } />
                   <Route path="/orders/:id" element={

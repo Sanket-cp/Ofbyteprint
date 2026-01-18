@@ -156,6 +156,9 @@ const Header = () => {
                         <Link to="/profile" className="block px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
                           Profile
                         </Link>
+                        <Link to="/orders" className="block px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                          My Orders
+                        </Link>
                         <button
                           onClick={logout}
                           className="block w-full text-left px-3 py-2 text-sm font-medium text-destructive hover:bg-muted transition-colors"
