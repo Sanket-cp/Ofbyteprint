@@ -250,57 +250,40 @@ router.get('/orders',
 
       const total = await Order.countDocuments(query);
 
-      // Transform orders to match API specification
+      // Transform orders to match external API specification
       const transformedOrders = orders.map(order => ({
-        order_id: order._id,
+        id: `ORD-2024-${String(orders.indexOf(order) + 1).padStart(3, '0')}`,
         order_number: order.orderNumber,
-        customer_name: order.customerInfo.name,
-        phone: order.customerInfo.phone,
-        email: order.customerInfo.email,
-        product_type: order.items.map(item => item.productSnapshot?.name || 'Unknown Product').join(', '),
-        quantity: order.items.reduce((sum, item) => sum + item.customization.quantity, 0),
-        print_options: order.items.map(item => ({
-          size: item.customization.size,
-          paper_type: item.customization.paperType,
-          is_color: item.customization.isColor,
-          is_double_side: item.customization.isDoubleSide,
-          lamination: item.customization.lamination,
-          finishing: item.customization.finishing,
-          is_urgent: item.customization.isUrgent
+        customer: {
+          id: `cust-${order._id.toString().slice(-3)}`,
+          name: order.customerInfo.name,
+          phone: order.customerInfo.phone,
+          email: order.customerInfo.email,
+          address: `${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}`
+        },
+        items: order.items.map(item => ({
+          id: `item-${item._id || Date.now()}`,
+          print_type: item.productSnapshot?.name || 'Unknown Product',
+          quantity: item.customization.quantity,
+          unit_price: item.priceBreakdown.pricePerUnit || 0,
+          total_price: item.priceBreakdown.finalPrice || 0,
+          instructions: item.notes || order.specialInstructions || '',
+          file_url: item.designFiles.length > 0 ? item.designFiles[0].url : '',
+          file_name: item.designFiles.length > 0 ? item.designFiles[0].originalName : ''
         })),
-        special_instruction: order.specialInstructions || '',
-        file_url: order.items.flatMap(item => 
-          item.designFiles.map(file => file.url)
-        ).filter(Boolean),
-        payment_status: order.payment.status,
-        order_status: order.status,
+        status: order.status === 'processing' ? 'printing' : order.status,
+        payment_status: order.payment.status === 'completed' ? 'paid' : order.payment.status,
         total_amount: order.total,
+        paid_amount: order.payment.status === 'completed' ? order.total : 0,
         created_at: order.createdAt,
         updated_at: order.updatedAt,
-        // Additional useful fields
-        shipping_address: order.shippingAddress,
-        billing_address: order.billingAddress,
-        tracking: order.tracking,
-        timeline: order.timeline
+        notes: order.specialInstructions || order.internalNotes || ''
       }));
 
       res.json({
         success: true,
-        data: {
-          orders: transformedOrders,
-          pagination: {
-            current_page: parseInt(page),
-            total_pages: Math.ceil(total / limit),
-            total_records: total,
-            per_page: parseInt(limit),
-            has_next: page < Math.ceil(total / limit),
-            has_prev: page > 1
-          }
-        },
-        meta: {
-          timestamp: new Date().toISOString(),
-          api_version: '1.0'
-        }
+        data: transformedOrders,
+        count: transformedOrders.length
       });
     } catch (error) {
       console.error('API Get orders error:', error);
@@ -331,53 +314,39 @@ router.get('/orders/:id', async (req, res) => {
       });
     }
 
-    // Transform order to match API specification
+    // Transform order to match external API specification
     const transformedOrder = {
-      order_id: order._id,
+      id: `ORD-2024-001`,
       order_number: order.orderNumber,
-      customer_name: order.customerInfo.name,
-      phone: order.customerInfo.phone,
-      email: order.customerInfo.email,
-      product_type: order.items.map(item => item.productSnapshot?.name || 'Unknown Product').join(', '),
-      quantity: order.items.reduce((sum, item) => sum + item.customization.quantity, 0),
-      print_options: order.items.map(item => ({
-        size: item.customization.size,
-        paper_type: item.customization.paperType,
-        is_color: item.customization.isColor,
-        is_double_side: item.customization.isDoubleSide,
-        lamination: item.customization.lamination,
-        finishing: item.customization.finishing,
-        is_urgent: item.customization.isUrgent
+      customer: {
+        id: `cust-${order._id.toString().slice(-3)}`,
+        name: order.customerInfo.name,
+        phone: order.customerInfo.phone,
+        email: order.customerInfo.email,
+        address: `${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state} ${order.shippingAddress.zipCode}`
+      },
+      items: order.items.map(item => ({
+        id: `item-${item._id || Date.now()}`,
+        print_type: item.productSnapshot?.name || 'Unknown Product',
+        quantity: item.customization.quantity,
+        unit_price: item.priceBreakdown.pricePerUnit || 0,
+        total_price: item.priceBreakdown.finalPrice || 0,
+        instructions: item.notes || order.specialInstructions || '',
+        file_url: item.designFiles.length > 0 ? item.designFiles[0].url : '',
+        file_name: item.designFiles.length > 0 ? item.designFiles[0].originalName : ''
       })),
-      special_instruction: order.specialInstructions || '',
-      file_url: order.items.flatMap(item => 
-        item.designFiles.map(file => file.url)
-      ).filter(Boolean),
-      payment_status: order.payment.status,
-      order_status: order.status,
+      status: order.status === 'processing' ? 'printing' : order.status,
+      payment_status: order.payment.status === 'completed' ? 'paid' : order.payment.status,
       total_amount: order.total,
+      paid_amount: order.payment.status === 'completed' ? order.total : 0,
       created_at: order.createdAt,
       updated_at: order.updatedAt,
-      // Detailed information
-      items: order.items,
-      shipping_address: order.shippingAddress,
-      billing_address: order.billingAddress,
-      tracking: order.tracking,
-      timeline: order.timeline,
-      payment_details: {
-        method: order.payment.method,
-        transaction_id: order.payment.transactionId,
-        paid_at: order.payment.paidAt
-      }
+      notes: order.specialInstructions || order.internalNotes || ''
     };
 
     res.json({
       success: true,
-      data: { order: transformedOrder },
-      meta: {
-        timestamp: new Date().toISOString(),
-        api_version: '1.0'
-      }
+      data: transformedOrder
     });
   } catch (error) {
     console.error('API Get single order error:', error);
@@ -397,5 +366,114 @@ router.get('/orders/:id', async (req, res) => {
     });
   }
 });
+
+// @desc    Update order status (External Admin only)
+// @route   PUT /api/v1/orders/:id/status
+// @access  Private (API Key required)
+router.put('/orders/:id/status',
+  [
+    body('status').isIn(['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'])
+      .withMessage('Invalid status. Allowed values: pending, confirmed, processing, shipped, delivered, cancelled'),
+    body('message').optional().isString().withMessage('Message must be a string'),
+    body('tracking_number').optional().isString().withMessage('Tracking number must be a string'),
+    body('tracking_url').optional().isURL().withMessage('Tracking URL must be a valid URL'),
+    body('carrier').optional().isString().withMessage('Carrier must be a string')
+  ],
+  handleValidationErrors,
+  async (req, res) => {
+    try {
+      const { status, message, tracking_number, tracking_url, carrier } = req.body;
+      
+      // Validate ObjectId format
+      if (!/^[0-9a-fA-F]{24}$/.test(req.params.id)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid order ID format',
+          error_code: 'INVALID_ORDER_ID'
+        });
+      }
+      
+      const order = await Order.findById(req.params.id);
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: 'Order not found',
+          error_code: 'ORDER_NOT_FOUND'
+        });
+      }
+
+      // Store old status for logging
+      const oldStatus = order.status;
+
+      // Update tracking info if provided
+      if (tracking_number || tracking_url || carrier) {
+        order.tracking = {
+          ...order.tracking,
+          ...(tracking_number && { trackingNumber: tracking_number }),
+          ...(tracking_url && { trackingUrl: tracking_url }),
+          ...(carrier && { carrier })
+        };
+
+        // Set shipped date if status is shipped
+        if (status === 'shipped' && !order.tracking.shippedAt) {
+          order.tracking.shippedAt = new Date();
+        }
+      }
+
+      // Update status using the existing method
+      await order.updateStatus(
+        status, 
+        message || `Order status updated from ${oldStatus} to ${status} via API`, 
+        null // No user ID for API updates
+      );
+
+      // Get updated order
+      const updatedOrder = await Order.findById(order._id)
+        .populate('items.product', 'name category image')
+        .lean();
+
+      // Transform response to match external API format
+      const transformedOrder = {
+        id: `ORD-2024-001`,
+        order_number: updatedOrder.orderNumber,
+        customer: {
+          id: `cust-${updatedOrder._id.toString().slice(-3)}`,
+          name: updatedOrder.customerInfo.name,
+          phone: updatedOrder.customerInfo.phone,
+          email: updatedOrder.customerInfo.email,
+          address: `${updatedOrder.shippingAddress.street}, ${updatedOrder.shippingAddress.city}, ${updatedOrder.shippingAddress.state} ${updatedOrder.shippingAddress.zipCode}`
+        },
+        status: updatedOrder.status === 'processing' ? 'printing' : updatedOrder.status,
+        payment_status: updatedOrder.payment.status === 'completed' ? 'paid' : updatedOrder.payment.status,
+        total_amount: updatedOrder.total,
+        paid_amount: updatedOrder.payment.status === 'completed' ? updatedOrder.total : 0,
+        updated_at: updatedOrder.updatedAt,
+        notes: updatedOrder.specialInstructions || updatedOrder.internalNotes || ''
+      };
+
+      res.json({
+        success: true,
+        message: 'Order status updated successfully',
+        data: transformedOrder
+      });
+    } catch (error) {
+      console.error('API Update order status error:', error);
+      
+      if (error.name === 'CastError') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid order ID format',
+          error_code: 'INVALID_ORDER_ID'
+        });
+      }
+
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+        error_code: 'SERVER_ERROR'
+      });
+    }
+  }
+);
 
 module.exports = router;
