@@ -158,6 +158,110 @@ const mockProducts = [
       metaDescription: "High-quality custom t-shirts for events, teams, and promotions. Multiple fabric options available.",
       keywords: ["custom t-shirts", "apparel printing", "team shirts", "event merchandise"]
     }
+  },
+  {
+    _id: "676e1234567890abcdef0004",
+    id: "sticker-die-cut",
+    name: "Die Cut Stickers",
+    category: "stickers",
+    description: "Custom die-cut stickers with any shape. Waterproof vinyl material with strong adhesive.",
+    basePrice: 8,
+    image: "/images/products/die-cut-stickers.jpg",
+    minQuantity: 50,
+    sizes: [
+      { id: "small", name: "Small", dimensions: "2\" x 2\"", priceMultiplier: 1 },
+      { id: "medium", name: "Medium", dimensions: "3\" x 3\"", priceMultiplier: 1.5 },
+      { id: "large", name: "Large", dimensions: "4\" x 4\"", priceMultiplier: 2 },
+      { id: "custom", name: "Custom Size", dimensions: "Custom", priceMultiplier: 2.5 }
+    ],
+    paperTypes: [
+      { id: "vinyl-white", name: "White Vinyl", priceMultiplier: 1 },
+      { id: "vinyl-clear", name: "Clear Vinyl", priceMultiplier: 1.2 },
+      { id: "vinyl-holographic", name: "Holographic Vinyl", priceMultiplier: 1.8 },
+      { id: "paper-matte", name: "Matte Paper", priceMultiplier: 0.7 }
+    ],
+    finishings: [
+      { id: "none", name: "Standard Cut", price: 0 },
+      { id: "kiss-cut", name: "Kiss Cut", price: 25 },
+      { id: "crack-back", name: "Crack & Peel", price: 50 }
+    ],
+    hasColor: true,
+    hasDoubleSide: false,
+    hasLamination: true,
+    hasUrgentDelivery: true,
+    bulkDiscounts: [
+      { minQuantity: 100, discountPercent: 10 },
+      { minQuantity: 250, discountPercent: 15 },
+      { minQuantity: 500, discountPercent: 20 },
+      { minQuantity: 1000, discountPercent: 25 }
+    ],
+    isFeatured: true,
+    isActive: true,
+    averageRating: 4.7,
+    reviewCount: 142,
+    specifications: {
+      weight: "3.2 mil",
+      material: "Vinyl / Paper",
+      printingMethod: "Digital Print + Die Cut",
+      colorOptions: ["Full Color CMYK", "Spot Colors"],
+      finishOptions: ["Die Cut", "Kiss Cut", "Laminated"]
+    },
+    seo: {
+      metaTitle: "Custom Die Cut Stickers - Any Shape Vinyl Stickers",
+      metaDescription: "Waterproof die-cut stickers in any shape. Perfect for branding, laptops, and promotions.",
+      keywords: ["die cut stickers", "custom stickers", "vinyl stickers", "waterproof stickers"]
+    }
+  },
+  {
+    _id: "676e1234567890abcdef0005",
+    id: "poster-a3",
+    name: "A3 Posters",
+    category: "posters",
+    description: "High-quality A3 size posters with vibrant colors. Perfect for events, promotions, and wall art.",
+    basePrice: 45,
+    image: "/images/products/a3-poster.jpg",
+    minQuantity: 1,
+    sizes: [
+      { id: "a3", name: "A3", dimensions: "11.7\" x 16.5\"", priceMultiplier: 1 },
+      { id: "a3-plus", name: "A3+", dimensions: "13\" x 19\"", priceMultiplier: 1.3 }
+    ],
+    paperTypes: [
+      { id: "matte-170", name: "Matte 170 GSM", priceMultiplier: 1 },
+      { id: "glossy-170", name: "Glossy 170 GSM", priceMultiplier: 1.1 },
+      { id: "satin-200", name: "Satin 200 GSM", priceMultiplier: 1.2 },
+      { id: "canvas", name: "Canvas Texture", priceMultiplier: 1.5 }
+    ],
+    finishings: [
+      { id: "none", name: "No Finishing", price: 0 },
+      { id: "lamination", name: "Lamination", price: 15 },
+      { id: "mounting", name: "Foam Board Mounting", price: 75 }
+    ],
+    hasColor: true,
+    hasDoubleSide: false,
+    hasLamination: true,
+    hasUrgentDelivery: true,
+    bulkDiscounts: [
+      { minQuantity: 10, discountPercent: 10 },
+      { minQuantity: 25, discountPercent: 15 },
+      { minQuantity: 50, discountPercent: 20 },
+      { minQuantity: 100, discountPercent: 25 }
+    ],
+    isFeatured: false,
+    isActive: true,
+    averageRating: 4.5,
+    reviewCount: 78,
+    specifications: {
+      weight: "170-200 GSM",
+      material: "Premium Paper / Canvas",
+      printingMethod: "Digital Offset",
+      colorOptions: ["Full Color CMYK"],
+      finishOptions: ["Matte", "Glossy", "Satin", "Laminated"]
+    },
+    seo: {
+      metaTitle: "A3 Posters - High Quality Digital Printing",
+      metaDescription: "Vibrant A3 posters for events, promotions, and wall art. Multiple paper options available.",
+      keywords: ["A3 posters", "poster printing", "event posters", "wall art"]
+    }
   }
 ];
 
